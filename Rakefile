@@ -1,13 +1,14 @@
 require 'rake/clean'
 
+MRUBY_ROOT = File.expand_path('mruby')
+MRBC = "#{MRUBY_ROOT}/bin/mrbc"
+LIB_MRUBY = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
+
 SRC  = ['vm.c', *Dir['*.c']].uniq
 OBJS = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 CC   = ENV['CC'] || 'cc'
-CC_FLAGS = "-Imruby/include"
-LD_FLAGS = "-static -Lmruby/build/host/lib -lmruby -lm"
-
-MRBC = 'mruby/bin/mrbc'
-LIB_MRUBY = 'mruby/build/host/lib/libmruby.a'
+CC_FLAGS = "-I#{MRUBY_ROOT}/include"
+LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
 
 CLEAN.include OBJS + ['vm.c']
 
@@ -15,7 +16,7 @@ desc "Builds mruby"
 task :mruby do
   sh 'git submodule init'
   sh 'git submodule update mruby'
-  sh 'make -C mruby'
+  Dir.chdir('mruby') { sh 'rake MRUBY_CONFIG=../mruby_config.rb' }
 end
 
 file LIB_MRUBY => :mruby
@@ -61,7 +62,7 @@ OBJS.zip(SRC).each do |obj,src|
 end
 
 file 'vm' => [LIB_MRUBY, *OBJS] do
-  sh "#{CC} #{LD_FLAGS} -o vm #{OBJS.join(' ')}"
+  sh "#{CC} #{LD_FLAGS} -o vm #{OBJS.join(' ')} -lmruby -lm"
 end
 
 task :default => 'vm'
