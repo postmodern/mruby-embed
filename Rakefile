@@ -18,8 +18,10 @@ task :mruby do
   sh 'make -C mruby'
 end
 
+file MRBC => :mruby
+
 desc "Compiles vm.rb into mruby ircode"
-file 'vm.mrb' => 'vm.rb' do
+file 'vm.mrb' => [MRBC, 'vm.rb'] do
   sh "#{MRBC} vm.rb"
 end
 
@@ -57,7 +59,7 @@ OBJS.zip(SRC).each do |obj,src|
   end
 end
 
-file 'vm' => OBJS do
+file 'vm' => [:mruby, *OBJS] do
   sh "#{CC} #{CC_FLAGS} #{LINK_FLAGS} -o vm #{OBJS.join(' ')}"
 end
 
