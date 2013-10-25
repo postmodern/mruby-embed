@@ -3,11 +3,10 @@ require 'rake/clean'
 SRC  = ['vm.c', *Dir['*.c']].uniq
 OBJS = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 CC   = ENV['CC'] || 'cc'
-
-CC_FLAGS   = "-Imruby/include"
-LINK_FLAGS = "-Lmruby/build/host/lib -lmruby"
+CC_FLAGS = "-Imruby/include"
 
 MRBC = 'mruby/bin/mrbc'
+LIB_MRUBY = 'mruby/build/host/lib/libmruby.a'
 
 CLEAN.include OBJS + ['vm.c']
 
@@ -18,7 +17,8 @@ task :mruby do
   sh 'make -C mruby'
 end
 
-file MRBC => :mruby
+file LIB_MRUBY => :mruby
+file MRBC      => :mruby
 
 desc "Compiles vm.rb into mruby ircode"
 file 'vm.mrb' => [MRBC, 'vm.rb'] do
@@ -28,7 +28,7 @@ end
 desc "Embeds vm.mrb into vm.c"
 file 'vm.c' => ['vm.mrb', __FILE__] do
   File.open('vm.c','w') do |f|
-    ir = File.binread('vm.mrb').bytes.to_a
+    ir = File.new('vm.mrb','rb').bytes.to_a
 
     f.puts %{
 #include "vm.h"
@@ -59,8 +59,8 @@ OBJS.zip(SRC).each do |obj,src|
   end
 end
 
-file 'vm' => [:mruby, *OBJS] do
-  sh "#{CC} #{CC_FLAGS} #{LINK_FLAGS} -o vm #{OBJS.join(' ')}"
+file 'vm' => [LIB_MRUBY, *OBJS] do
+  sh "#{CC} -o vm #{LIB_MRUBY} #{OBJS.join(' ')}"
 end
 
 task :default => 'vm'
