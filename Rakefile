@@ -4,6 +4,7 @@ SRC  = ['vm.c', *Dir['*.c']].uniq
 OBJS = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 CC   = ENV['CC'] || 'cc'
 CC_FLAGS = "-Imruby/include"
+LD_FLAGS = "-static"
 
 MRBC = 'mruby/bin/mrbc'
 LIB_MRUBY = 'mruby/build/host/lib/libmruby.a'
@@ -60,7 +61,7 @@ OBJS.zip(SRC).each do |obj,src|
 end
 
 file 'vm' => [LIB_MRUBY, *OBJS] do
-  sh "#{CC} -o vm #{LIB_MRUBY} #{OBJS.join(' ')}"
+  sh "#{CC} #{LD_FLAGS} -o vm #{LIB_MRUBY} #{OBJS.join(' ')}"
 end
 
 task :default => 'vm'
