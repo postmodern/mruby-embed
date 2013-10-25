@@ -13,7 +13,7 @@ CLEAN.include OBJS + ['vm.c']
 
 desc "Builds mruby"
 task :mruby do
-  sh 'git submodule init' unless File.directory?('mruby')
+  sh 'git submodule init'
   sh 'git submodule update mruby'
   sh 'make -C mruby'
 end
