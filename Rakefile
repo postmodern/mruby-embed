@@ -55,8 +55,9 @@ OBJS.zip(SRC).each do |obj,src|
   end
 end
 
-file 'vm' => [LIB_MRUBY, *OBJS] do
-  sh "#{CC} #{LD_FLAGS} -o vm #{OBJS.join(' ')} -lmruby -lm"
+desc "Builds the binary"
+file 'bin' => [LIB_MRUBY, *OBJS] do
+  sh "#{CC} #{LD_FLAGS} -o bin #{OBJS.join(' ')} -lmruby -lm"
 end
 
-task :default => 'vm'
+task :default => 'bin'
