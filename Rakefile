@@ -5,13 +5,13 @@ MRBC = "#{MRUBY_ROOT}/bin/mrbc"
 LIB_MRUBY = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
 LIB  = Dir['lib/*.rb']
-SRC  = (Dir['*.c'] + ['lib.c']).uniq
+SRC  = (Dir['src/*.c'] + ['src/lib.c']).uniq
 OBJS = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 CC   = ENV['CC'] || 'cc'
 CC_FLAGS = "-I#{MRUBY_ROOT}/include"
 LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
 
-CLEAN.include OBJS + ['lib.c']
+CLEAN.include OBJS + ['src/lib.c']
 
 file LIB_MRUBY => 'mruby_config.rb' do
   sh 'git submodule init'
@@ -25,9 +25,9 @@ file 'lib.mrb' => [MRBC, *LIB] do
   sh "#{MRBC} -o lib.mrb #{LIB.join(' ')}"
 end
 
-desc "Embeds lib.mrb into vm.c"
-file 'lib.c' => ['lib.mrb', __FILE__] do
-  File.open('lib.c','w') do |f|
+desc "Embeds lib.mrb into src/lib.c"
+file 'src/lib.c' => ['lib.mrb', __FILE__] do
+  File.open('src/lib.c','w') do |f|
     ir = File.new('lib.mrb','rb').bytes.to_a
 
     f.puts %{

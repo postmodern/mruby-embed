@@ -1,4 +1,4 @@
 *.o
-lib.c
+src/lib.c
 lib.mrb
 bin
