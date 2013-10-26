@@ -13,6 +13,7 @@ MRuby::Build.new do |conf|
 
   # include the default GEMs
   conf.gembox 'default'
+  conf.gem :github => 'iij/mruby-io'
 
   # C compiler settings
   # conf.cc do |cc|
