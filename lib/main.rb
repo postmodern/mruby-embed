@@ -1,4 +1,6 @@
-def main(argv=[])
+def main(*argv)
+  p argv
+
   loop do
     print '>> '
     line = gets.chomp
