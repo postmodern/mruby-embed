@@ -6,6 +6,7 @@
 int main(int argc,const char *argv[])
 {
 	mrb_state *mrb;
+	mrb_value ret;
 
 	if (!(mrb = mrb_open()))
 	{
@@ -13,7 +14,8 @@ int main(int argc,const char *argv[])
 		return -1;
 	}
 
-	mrb_value ret = lib_init(mrb);
+	ret = lib_init(mrb);
+	ret = mrb_funcall(mrb, mrb_top_self(mrb), "main", 0);
 
 	if (mrb->exc)
 	{
