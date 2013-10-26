@@ -5,13 +5,13 @@ MRBC = "#{MRUBY_ROOT}/bin/mrbc"
 LIB_MRUBY = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
 LIB  = Dir['lib/*.rb']
-SRC  = ['vm.c', *Dir['*.c']].uniq
+SRC  = (Dir['*.c'] + ['lib.c']).uniq
 OBJS = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 CC   = ENV['CC'] || 'cc'
 CC_FLAGS = "-I#{MRUBY_ROOT}/include"
 LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
 
-CLEAN.include OBJS + ['vm.c']
+CLEAN.include OBJS + ['lib.c']
 
 desc "Builds mruby"
 task :mruby do
@@ -29,28 +29,22 @@ file 'lib.mrb' => [MRBC, *LIB] do
 end
 
 desc "Embeds lib.mrb into vm.c"
-file 'vm.c' => ['lib.mrb', __FILE__] do
-  File.open('vm.c','w') do |f|
+file 'lib.c' => ['lib.mrb', __FILE__] do
+  File.open('lib.c','w') do |f|
     ir = File.new('lib.mrb','rb').bytes.to_a
 
     f.puts %{
-#include "vm.h"
+#include "lib.h"
 
 #include <mruby.h>
 #include <mruby/irep.h>
 
-mrb_state * vm_load()
+mrb_value lib_init(mrb_state *state)
 {
 \tconst uint8_t ircode[] = {#{ir.join(', ')}};
 \tmrb_state *mrb;
 
-\tif (!(mrb = mrb_open()))
-\t{
-\t\treturn NULL;
-\t}
-
 \tmrb_load_irep(mrb, ircode);
-\treturn mrb;
 }
     }.strip
   end
