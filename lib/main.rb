@@ -1,4 +1,4 @@
-def main(*argv)
+def main(argv=[])
   p argv
 
   loop do

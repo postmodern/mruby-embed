@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <mruby.h>
+#include <mruby/array.h>
 
 #include "lib.h"
 
@@ -19,17 +20,17 @@ int main(int argc,const char *argv[])
 	ret = lib_init(mrb);
 
 	mrb_sym name = mrb_intern_cstr(mrb,"main");
-	mrb_value args[argc-1];
+	mrb_value args = mrb_ary_new(mrb);
 	int i;
 
 	// convert argv into mruby strings
-	for (i=0; i<argc-1; i++)
+	for (i=1; i<argc; i++)
 	{
-		args[i] = mrb_str_new_cstr(mrb,argv[i+1]);
+		 mrb_ary_push(mrb, args, mrb_str_new_cstr(mrb,argv[i]));
 	}
 
 	// call main
-	ret = mrb_funcall_argv(mrb, mrb_top_self(mrb), name, argc-1, args);
+	ret = mrb_funcall_argv(mrb, mrb_top_self(mrb), name, 1, &args);
 
 	// check for exception
 	if (mrb->exc)
