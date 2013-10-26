@@ -39,12 +39,11 @@ file 'lib.c' => ['lib.mrb', __FILE__] do
 #include <mruby.h>
 #include <mruby/irep.h>
 
-mrb_value lib_init(mrb_state *state)
+mrb_value lib_init(mrb_state *mrb)
 {
 \tconst uint8_t ircode[] = {#{ir.join(', ')}};
-\tmrb_state *mrb;
 
-\tmrb_load_irep(mrb, ircode);
+\treturn mrb_load_irep(mrb, ircode);
 }
     }.strip
   end
