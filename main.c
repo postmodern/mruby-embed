@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <mruby.h>
 
 #include "lib.h"
 
@@ -12,7 +13,12 @@ int main(int argc,const char *argv[])
 		return -1;
 	}
 
-	lib_init(mrb);
+	mrb_value ret = lib_init(mrb);
+
+	if (mrb->exc)
+	{
+		mrb_p(mrb, mrb_obj_value(mrb->exc));
+	}
 
 	mrb_close(mrb);
 	return 0;
