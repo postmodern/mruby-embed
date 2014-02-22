@@ -3,9 +3,13 @@ def main(argv=[])
 
   loop do
     print '>> '
-    line = gets.chomp
+
+    unless (line = gets)
+      return
+    end
+
     begin
-      result = eval(line)
+      result = eval(line.chomp)
 
       puts "=> #{result.inspect}"
     rescue => error
