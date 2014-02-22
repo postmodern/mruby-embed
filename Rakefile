@@ -1,4 +1,5 @@
 require 'rake/clean'
+require 'erb'
 
 MRUBY_ROOT = File.expand_path('mruby')
 MRBC = "#{MRUBY_ROOT}/bin/mrbc"
@@ -26,23 +27,12 @@ file 'lib.mrb' => [MRBC, *LIB] do
 end
 
 desc "Embeds lib.mrb into src/lib.c"
-file 'src/lib.c' => ['lib.mrb', __FILE__] do
+file 'src/lib.c' => ['lib.mrb', 'src/lib.c.erb'] do
   File.open('src/lib.c','w') do |f|
-    ir = File.new('lib.mrb','rb').bytes.to_a
+    ir  = File.new('lib.mrb','rb').bytes.to_a
+    erb = ERB.new(File.read('src/lib.c.erb'))
 
-    f.puts %{
-#include "lib.h"
-
-#include <mruby.h>
-#include <mruby/irep.h>
-
-mrb_value lib_init(mrb_state *mrb)
-{
-\tconst uint8_t ircode[] = {#{ir.join(', ')}};
-
-\treturn mrb_load_irep(mrb, ircode);
-}
-    }.strip
+    f.write erb.result(binding)
   end
 end
 

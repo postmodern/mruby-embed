@@ -1,0 +1,11 @@
+#include "lib.h"
+
+#include <mruby.h>
+#include <mruby/irep.h>
+
+mrb_value lib_init(mrb_state *mrb)
+{
+  const uint8_t ircode[] = {<%= ir.join(', ') %>};
+
+  return mrb_load_irep(mrb, ircode);
+}
