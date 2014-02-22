@@ -33,6 +33,11 @@ namespace :mruby do
   task :build do
     cd('mruby') { sh 'rake MRUBY_CONFIG=../mruby_config.rb' }
   end
+
+  desc 'Starts the mruby console'
+  task :console do
+    system './mruby/bin/mirb'
+  end
 end
 
 file LIB_MRUBY => 'mruby:build'
