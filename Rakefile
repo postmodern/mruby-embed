@@ -29,7 +29,7 @@ end
 desc "Embeds lib.mrb into src/lib.c"
 file 'src/lib.c' => ['lib.mrb', 'src/lib.c.erb'] do
   File.open('src/lib.c','w') do |f|
-    ir  = File.new('lib.mrb','rb').bytes.to_a
+    ir  = File.new('lib.mrb','rb').each_byte.to_a
     erb = ERB.new(File.read('src/lib.c.erb'))
 
     f.write erb.result(binding)
