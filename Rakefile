@@ -14,12 +14,29 @@ LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
 
 CLEAN.include OBJS + ['src/lib.c']
 
-file LIB_MRUBY => 'mruby_config.rb' do
+file 'mruby' do
   sh 'git submodule init'
-  Dir.chdir('mruby') { sh 'rake MRUBY_CONFIG=../mruby_config.rb' }
 end
 
-file MRBC => LIB_MRUBY
+namespace :mruby do
+  desc 'Updates the mruby repository'
+  task :update do
+    cd('mruby') { sh 'git pull origin master' }
+  end
+
+  desc 'Cleans the mruby repository'
+  task :clean do
+    cd('mruby') { sh 'rake clean' }
+  end
+
+  desc 'Builds mruby'
+  task :build do
+    cd('mruby') { sh 'rake MRUBY_CONFIG=../mruby_config.rb' }
+  end
+end
+
+file LIB_MRUBY => 'mruby:build'
+file MRBC      => 'mruby:build'
 
 desc "Compiles vm.rb into mruby ircode"
 file 'lib.mrb' => [MRBC, *LIB] do
