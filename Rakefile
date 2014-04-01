@@ -2,13 +2,14 @@ require 'rake/clean'
 require 'erb'
 
 MRUBY_ROOT = File.expand_path('mruby')
-MRBC = "#{MRUBY_ROOT}/bin/mrbc"
-LIB_MRUBY = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
+MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
+LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
 LIB  = Dir['lib/*.rb']
 SRC  = (Dir['src/*.c'] + ['src/lib.c']).uniq
 OBJS = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 CC   = ENV['CC'] || 'cc'
+
 CC_FLAGS = "-I#{MRUBY_ROOT}/include"
 LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
 
