@@ -1,7 +1,7 @@
 ## mruby-embed
 
-Proof-of-Concept for embedding [mruby] and Ruby code into a statically compiled
-binary.
+Proof-of-Concept for embedding [mruby] and Ruby code into a statically linked 
+executable.
 
 All Ruby code in the `lib/` directory is compiled into mruby IR code using the
 `mrbc` utility. The IR code is then embedded in `src/lib.c` as an array of
