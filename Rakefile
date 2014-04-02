@@ -2,7 +2,6 @@ require 'rake/clean'
 require 'erb'
 
 MRUBY_ROOT = File.expand_path('mruby')
-MRUBY_VER  = '1.0.0'
 MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
 LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
