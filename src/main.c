@@ -16,10 +16,6 @@ int main(int argc,const char *argv[])
 		return -1;
 	}
 
-	// load the compiled library
-	ret = lib_init(mrb);
-
-	mrb_sym name = mrb_intern_cstr(mrb,"main");
 	mrb_value args = mrb_ary_new(mrb);
 	int i;
 
@@ -29,8 +25,10 @@ int main(int argc,const char *argv[])
 		 mrb_ary_push(mrb, args, mrb_str_new_cstr(mrb,argv[i]));
 	}
 
-	// call main
-	ret = mrb_funcall_argv(mrb, mrb_top_self(mrb), name, 1, &args);
+	mrb_define_global_const(mrb, "ARGV", args);
+
+	// load the compiled library
+	ret = lib_init(mrb);
 
 	// check for exception
 	if (mrb->exc)
