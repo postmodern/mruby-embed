@@ -9,7 +9,7 @@ CC       = ENV['CC'] || 'cc'
 CC_FLAGS = %W[-I#{MRUBY_ROOT}/include]
 LD_FLAGS = %W[-static -L#{MRUBY_ROOT}/build/host/lib]
 
-RUBY_SRC = Dir['lib/*.rb']
+RUBY_SRC = Dir['lib/{**/}*.rb']
 SRC      = Set[*Dir['src/*.c'], 'src/lib.c']
 OBJS     = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 BIN      = 'bin'
