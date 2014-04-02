@@ -2,6 +2,7 @@ require 'rake/clean'
 require 'erb'
 
 MRUBY_ROOT = File.expand_path('mruby')
+MRUBY_VER  = '1.0.0'
 MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
 LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
@@ -18,6 +19,7 @@ CLEAN.include *OBJS, 'src/lib.c', BIN
 
 file 'mruby' do
   sh 'git submodule init'
+  sh 'git submodule update'
 end
 
 namespace :mruby do
