@@ -5,11 +5,10 @@ MRUBY_ROOT = File.expand_path('mruby')
 MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
 LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
-LIB  = Dir['lib/*.rb']
-SRC  = (Dir['src/*.c'] + ['src/lib.c']).uniq
-OBJS = SRC.map { |file| file.gsub(/\.c$/,'.o') }
-CC   = ENV['CC'] || 'cc'
-
+RUBY_SRC = Dir['lib/*.rb']
+SRC      = Set[*Dir['src/*.c'], 'src/lib.c']
+OBJS     = SRC.map { |file| file.gsub(/\.c$/,'.o') }
+CC       = ENV['CC'] || 'cc'
 CC_FLAGS = "-I#{MRUBY_ROOT}/include"
 LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
 
@@ -45,8 +44,8 @@ file LIB_MRUBY => 'mruby:build'
 file MRBC      => 'mruby:build'
 
 desc "Compiles vm.rb into mruby ircode"
-file 'lib.mrb' => [MRBC, *LIB] do
-  sh "#{MRBC} -o lib.mrb #{LIB.join(' ')}"
+file 'lib.mrb' => [MRBC, *RUBY_SRC] do
+  sh "#{MRBC} -o lib.mrb #{RUBY_SRC.join(' ')}"
 end
 
 desc "Embeds lib.mrb into src/lib.c"
