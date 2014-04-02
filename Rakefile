@@ -6,8 +6,8 @@ MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
 LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
 CC       = ENV['CC'] || 'cc'
-CC_FLAGS = "-I#{MRUBY_ROOT}/include"
-LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
+CC_FLAGS = %W[-I#{MRUBY_ROOT}/include]
+LD_FLAGS = %W[-static -L#{MRUBY_ROOT}/build/host/lib]
 
 RUBY_SRC = Dir['lib/*.rb']
 SRC      = Set[*Dir['src/*.c'], 'src/lib.c']
@@ -47,7 +47,7 @@ file MRBC      => 'mruby:build'
 
 desc "Compiles lib/*.rb into lib.mrb"
 file 'lib.mrb' => [MRBC, *RUBY_SRC] do
-  sh "#{MRBC} -o lib.mrb #{RUBY_SRC.join(' ')}"
+  sh MRBC, '-o', 'lib.mrb', *RUBY_SRC
 end
 
 desc "Embeds lib.mrb into src/lib.c"
@@ -62,13 +62,13 @@ end
 
 OBJS.zip(SRC).each do |obj,src|
   file obj => src do
-    sh "#{CC} #{CC_FLAGS} -c -o #{obj} #{src}"
+    sh CC, *CC_FLAGS, '-c', '-o', obj, src
   end
 end
 
 desc "Builds the binary"
 file BIN => [LIB_MRUBY, *OBJS] do
-  sh "#{CC} #{LD_FLAGS} -o bin #{OBJS.join(' ')} -lmruby -lm"
+  sh CC, *LD_FLAGS, '-o', BIN, *OBJS, '-lmruby', '-lm'
 end
 
 task :default => BIN
