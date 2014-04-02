@@ -12,7 +12,8 @@ CC       = ENV['CC'] || 'cc'
 CC_FLAGS = "-I#{MRUBY_ROOT}/include"
 LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
 
-CLEAN.include OBJS + ['src/lib.c']
+CLEAN.include *OBJS, 'src/lib.c'
+p CLEAN
 
 file 'mruby' do
   sh 'git submodule init'
