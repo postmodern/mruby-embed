@@ -1,4 +1,4 @@
-*.o
+src/*.o
 src/lib.c
 lib.mrb
 bin
