@@ -5,15 +5,16 @@ MRUBY_ROOT = File.expand_path('mruby')
 MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
 LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
-RUBY_SRC = Dir['lib/*.rb']
-SRC      = Set[*Dir['src/*.c'], 'src/lib.c']
-OBJS     = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 CC       = ENV['CC'] || 'cc'
 CC_FLAGS = "-I#{MRUBY_ROOT}/include"
 LD_FLAGS = "-static -L#{MRUBY_ROOT}/build/host/lib"
 
-CLEAN.include *OBJS, 'src/lib.c'
-p CLEAN
+RUBY_SRC = Dir['lib/*.rb']
+SRC      = Set[*Dir['src/*.c'], 'src/lib.c']
+OBJS     = SRC.map { |file| file.gsub(/\.c$/,'.o') }
+BIN      = 'bin'
+
+CLEAN.include *OBJS, 'src/lib.c', BIN
 
 file 'mruby' do
   sh 'git submodule init'
@@ -44,7 +45,7 @@ end
 file LIB_MRUBY => 'mruby:build'
 file MRBC      => 'mruby:build'
 
-desc "Compiles vm.rb into mruby ircode"
+desc "Compiles lib/*.rb into lib.mrb"
 file 'lib.mrb' => [MRBC, *RUBY_SRC] do
   sh "#{MRBC} -o lib.mrb #{RUBY_SRC.join(' ')}"
 end
@@ -66,8 +67,8 @@ OBJS.zip(SRC).each do |obj,src|
 end
 
 desc "Builds the binary"
-file 'bin' => [LIB_MRUBY, *OBJS] do
+file BIN => [LIB_MRUBY, *OBJS] do
   sh "#{CC} #{LD_FLAGS} -o bin #{OBJS.join(' ')} -lmruby -lm"
 end
 
-task :default => 'bin'
+task :default => BIN
