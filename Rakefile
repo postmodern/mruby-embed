@@ -3,11 +3,17 @@ require 'erb'
 
 MRUBY_ROOT = File.expand_path('mruby')
 MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
+MRBC_FLAGS = %W[]
 LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
 CC       = ENV['CC'] || 'cc'
 CC_FLAGS = %W[-I#{MRUBY_ROOT}/include]
 LD_FLAGS = %W[-static -L#{MRUBY_ROOT}/build/host/lib]
+
+if ENV['DEBUG']
+  MRBC_FLAGS << '-g'
+  CC_FLAGS   << '-ggdb'
+end
 
 RUBY_SRC = Dir['lib/{**/}*.rb']
 SRC      = Set[*Dir['src/*.c'], 'src/lib.c']
@@ -48,7 +54,7 @@ file MRBC      => 'mruby:build'
 
 desc "Compiles lib/*.rb into lib.mrb"
 file 'lib.mrb' => [MRBC, *RUBY_SRC] do
-  sh MRBC, '-o', 'lib.mrb', *RUBY_SRC
+  sh MRBC, *MRBC_FLAGS, '-o', 'lib.mrb', *RUBY_SRC
 end
 
 desc "Embeds lib.mrb into src/lib.c"
