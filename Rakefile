@@ -49,6 +49,8 @@ namespace :mruby do
   end
 end
 
+task :clean => 'mruby:clean'
+
 file LIB_MRUBY => 'mruby:build'
 file MRBC      => 'mruby:build'
 
