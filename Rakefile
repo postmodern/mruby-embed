@@ -14,7 +14,7 @@ SRC      = Set[*Dir['src/*.c'], 'src/lib.c']
 OBJS     = SRC.map { |file| file.gsub(/\.c$/,'.o') }
 BIN      = 'bin'
 
-CLEAN.include *OBJS, 'src/lib.c', BIN
+CLEAN.include *OBJS, 'lib.mrb', 'src/lib.c', BIN
 
 file 'mruby' do
   sh 'git submodule init'
