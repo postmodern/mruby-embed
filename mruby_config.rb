@@ -14,6 +14,7 @@ MRuby::Build.new do |conf|
   # include the default GEMs
   conf.gembox 'default'
   conf.gem :core => 'mruby-eval'
+  conf.gem :github => 'iij/mruby-dir'
   conf.gem :github => 'iij/mruby-io'
   conf.gem :github => 'iij/mruby-socket'
 
