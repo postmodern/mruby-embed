@@ -16,7 +16,7 @@ if ENV['DEBUG']
 end
 
 RUBY_SRC = Rake::FileList['lib/{**/}*.rb']
-SRC      = Rake::FileList['src/*.c', 'src/lib.c']
+SRC      = Rake::FileList['src/*.c', 'src/lib.c'].uniq
 OBJS     = SRC.ext('.o')
 BIN      = 'bin'
 
