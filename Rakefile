@@ -15,12 +15,12 @@ if ENV['DEBUG']
   CC_FLAGS   << '-ggdb'
 end
 
-RUBY_SRC = Dir['lib/{**/}*.rb']
-SRC      = Set[*Dir['src/*.c'], 'src/lib.c']
-OBJS     = SRC.map { |file| file.gsub(/\.c$/,'.o') }
+RUBY_SRC = Rake::FileList['lib/{**/}*.rb']
+SRC      = Rake::FileList['src/*.c', 'src/lib.c']
+OBJS     = SRC.ext('.o')
 BIN      = 'bin'
 
-CLEAN.include *OBJS, 'lib.mrb', 'src/lib.c', BIN
+CLEAN.include OBJS, 'lib.mrb', 'src/lib.c', BIN
 
 file 'mruby' do
   sh 'git submodule init'
@@ -69,10 +69,8 @@ file 'src/lib.c' => ['lib.mrb', 'src/lib.c.erb'] do
   end
 end
 
-OBJS.zip(SRC).each do |obj,src|
-  file obj => src do
-    sh CC, *CC_FLAGS, '-c', '-o', obj, src
-  end
+rule '.o' => '.c' do |t|
+  sh CC, *CC_FLAGS, '-c', '-o', t.name, t.source
 end
 
 desc "Builds the binary"
