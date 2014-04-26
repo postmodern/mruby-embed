@@ -6,6 +6,8 @@ MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
 MRBC_FLAGS = %W[]
 LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
 
+ENV['MRUBY_CONFIG'] ||= File.expand_path('mruby_config.rb')
+
 CC       = ENV['CC'] || 'cc'
 CC_FLAGS = %W[-I#{MRUBY_ROOT}/include]
 LD_FLAGS = %W[-static -L#{MRUBY_ROOT}/build/host/lib]
@@ -40,7 +42,7 @@ namespace :mruby do
 
   desc 'Builds mruby'
   task :build do
-    cd('mruby') { sh 'make MRUBY_CONFIG=../mruby_config.rb' }
+    cd('mruby') { sh 'make' }
   end
 
   desc 'Starts the mruby console'
