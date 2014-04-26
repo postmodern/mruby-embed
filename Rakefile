@@ -35,12 +35,12 @@ namespace :mruby do
 
   desc 'Cleans the mruby repository'
   task :clean do
-    cd('mruby') { sh 'rake clean' }
+    cd('mruby') { sh 'make clean' }
   end
 
   desc 'Builds mruby'
   task :build do
-    cd('mruby') { sh 'rake MRUBY_CONFIG=../mruby_config.rb' }
+    cd('mruby') { sh 'make MRUBY_CONFIG=../mruby_config.rb' }
   end
 
   desc 'Starts the mruby console'
