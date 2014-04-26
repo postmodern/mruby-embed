@@ -45,6 +45,11 @@ namespace :mruby do
     cd('mruby') { sh 'make' }
   end
 
+  desc 'Tests mruby'
+  task :test do
+    cd('mruby') { sh 'make test' }
+  end
+
   desc 'Starts the mruby console'
   task :console do
     system './mruby/bin/mirb'
