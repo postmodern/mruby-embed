@@ -11,6 +11,7 @@ ENV['MRUBY_CONFIG'] ||= File.expand_path('mruby_config.rb')
 CC       = ENV['CC'] || 'cc'
 CC_FLAGS = %W[-I#{MRUBY_ROOT}/include]
 LD_FLAGS = %W[-static -L#{MRUBY_ROOT}/build/host/lib]
+LIBS     = %W[mruby m]
 
 if ENV['DEBUG']
   MRBC_FLAGS << '-g'
@@ -82,7 +83,7 @@ end
 
 desc "Builds the binary"
 file BIN => [LIB_MRUBY, *OBJS] do
-  sh CC, *LD_FLAGS, '-o', BIN, *OBJS, '-lmruby', '-lm'
+  sh CC, *LD_FLAGS, '-o', BIN, *OBJS, *LIBS.map { |lib| "-l#{lib}" }
 end
 
 task :default => BIN
