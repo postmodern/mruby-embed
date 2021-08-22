@@ -1,4 +1,5 @@
-src/*.o
-src/lib.c
-lib.mrb
-bin
+/src/*.o
+/src/lib.c
+/lib.mrb
+/bin
+/vendor

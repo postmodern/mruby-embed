@@ -1,7 +1,11 @@
 require 'rake/clean'
 require 'erb'
 
-MRUBY_ROOT = File.expand_path('mruby')
+MRUBY_VERSION = ENV['MRUBY_VERSION'] || "3.0.0"
+MRUBY_ARCHIVE = "mruby-#{MRUBY_VERSION}.zip"
+MRUBY_URL     = "https://github.com/mruby/mruby/archive/#{MRUBY_VERSION}.zip"
+
+MRUBY_ROOT = "vendor/mruby"
 MRBC       = "#{MRUBY_ROOT}/bin/mrbc"
 MRBC_FLAGS = %W[]
 LIB_MRUBY  = "#{MRUBY_ROOT}/build/host/lib/libmruby.a"
@@ -25,35 +29,38 @@ BIN      = 'bin'
 
 CLEAN.include OBJS, 'lib.mrb', 'src/lib.c', BIN
 
-file 'mruby' do
-  sh 'git submodule init'
-  sh 'git submodule update'
+directory 'vendor'
+file "vendor/#{MRUBY_ARCHIVE}" => 'vendor' do
+  sh 'wget', '-O', "vendor/#{MRUBY_ARCHIVE}", MRUBY_URL
+end
+
+file "vendor/mruby-#{MRUBY_VERSION}" => "vendor/#{MRUBY_ARCHIVE}" do
+  sh 'unzip', '-d', 'vendor', "vendor/#{MRUBY_ARCHIVE}"
+end
+
+file "vendor/mruby" => "vendor/mruby-#{MRUBY_VERSION}" do
+  sh 'ln', '-sf', "mruby-#{MRUBY_VERSION}", 'vendor/mruby'
 end
 
 namespace :mruby do
-  desc 'Updates the mruby repository'
-  task :update do
-    cd('mruby') { sh 'git pull origin master' }
-  end
-
   desc 'Cleans the mruby repository'
-  task :clean do
-    cd('mruby') { sh 'make clean' }
+  task :clean => 'vendor/mruby' do
+    cd('vendor/mruby') { sh 'rake clean' }
   end
 
   desc 'Builds mruby'
-  task :build do
-    cd('mruby') { sh 'make' }
+  task :build => 'vendor/mruby' do
+    cd('vendor/mruby') { sh 'rake' }
   end
 
   desc 'Tests mruby'
-  task :test do
-    cd('mruby') { sh 'make test' }
+  task :test => 'vendor/mruby' do
+    cd('mruby') { sh 'rake test' }
   end
 
   desc 'Starts the mruby console'
-  task :console do
-    system './mruby/bin/mirb'
+  task :console => 'vendor/mruby' do
+    system './vendor/mruby/bin/mirb'
   end
 end
 
